@@ -1,23 +1,22 @@
-# app.py
 from flask import Flask, request, redirect, url_for, render_template, flash
 from flask_ldap3_login import LDAP3LoginManager
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 
 app = Flask(__name__)
-# app.secret_key = 'your-secret'
 app.secret_key = '9f2a1b8c4d6e7f0123456789abcdef01'
 
-# LDAP Config
-
-app.config['LDAP_HOST'] = '127.0.0.1'
-app.config['LDAP_BASE_DN'] = 'dc=vector-india,dc=in'
+# LDAP Config - using your IP as domain
+app.config['LDAP_HOST'] = 'ldap'  # Docker internal name
+app.config['LDAP_BASE_DN'] = 'dc=163,dc=53,dc=203,dc=3'
 app.config['LDAP_USER_DN'] = 'ou=People'
 app.config['LDAP_GROUP_DN'] = 'ou=Groups'
 app.config['LDAP_USER_RDN_ATTR'] = 'uid'
-app.config['LDAP_BIND_USER_DN'] = 'cn=admin,dc=vector-india,dc=in'
+app.config['LDAP_BIND_USER_DN'] = 'cn=admin,dc=163,dc=53,dc=203,dc=3'
 app.config['LDAP_BIND_USER_PASSWORD'] = 'pankaj4433'
 
 ldap_manager = LDAP3LoginManager(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
 class User(UserMixin):
     def __init__(self, dn, username):
@@ -32,6 +31,10 @@ def save_user(dn, username, data, memberships):
     users[dn] = user
     return user
 
+@login_manager.user_loader
+def load_user(user_id):
+    return users.get(user_id)
+
 @app.route('/')
 def index():
     return render_template('login.html')
@@ -41,10 +44,6 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        print("username:",username)
-        print("password:",password)
-
         response = ldap_manager.authenticate(username, password)
 
         if response.status:
@@ -54,12 +53,16 @@ def login():
             flash('Invalid credentials')
     return render_template('login.html')
 
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # return f"Welcome {users.get(current_user.id).name}!"
-    return render_template("dashboard.html")
+    return render_template("dashboard.html", username=current_user.name)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

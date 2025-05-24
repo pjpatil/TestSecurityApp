@@ -5,9 +5,9 @@ services:
     image: osixia/openldap:1.5.0
     container_name: ldap
     environment:
-      LDAP_ORGANISATION: "Example Org"
-      LDAP_DOMAIN: "example.com"
-      LDAP_ADMIN_PASSWORD: admin
+      LDAP_ORGANISATION: "My Org"
+      LDAP_DOMAIN: "163.53.203.3"
+      LDAP_ADMIN_PASSWORD: pankaj4433
     ports:
       - "389:389"
       - "636:636"
@@ -26,11 +26,12 @@ services:
       - ldap
 
   flask:
-    build: ./flask-app
+    build:
+      context: .
     ports:
-      - "5000:5000"
+      - "5010:5000"
     volumes:
-      - ./flask-app:/app
+      - .:/app
     depends_on:
       - ldap
 

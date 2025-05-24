@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-</head>
-<body>
-<h1>Hiii Pankaj </h1>
-</body>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f9f9f9;
+      }
+      .header {
+        background: #007bff;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+      }
+      .container {
+        padding: 2rem;
+      }
+      .logout {
+        float: right;
+        margin-top: -2.5rem;
+        margin-right: 1rem;
+      }
+      .logout a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Welcome to the Dashboard</h1>
+      <div class="logout">
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+    <div class="container">
+      <p>Hello, {{ current_user.name }}!</p>
+      <p>You have successfully logged in using LDAP authentication.</p>
+    </div>
+  </body>
 </html>

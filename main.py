@@ -58,11 +58,21 @@ def login():
 def dashboard():
     return render_template("dashboard.html", username=current_user.name)
 
+# @app.route('/logout')
+# @login_required
+# def logout():
+#     logout_user()
+#     return redirect(url_for('login'))
+
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
+    flash("You have been logged out.")
     return redirect(url_for('login'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
